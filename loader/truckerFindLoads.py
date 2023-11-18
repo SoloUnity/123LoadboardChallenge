@@ -1,0 +1,26 @@
+from gasModel import getProfitMinusGas
+import copy
+
+def trucker_find_loads(KDTree, truck):
+    working_KD_Tree = copy.deepcopy(KDTree)
+    potential_loads = working_KD_Tree.find_k_closest_loads(truck["point"])
+    greatest_profit = 0
+    for load in potential_loads:
+        miles_to_load = -load[0] #distance_matrix_api()
+        trip_length = _classifier(float(load[1].mileage))
+        net_profit = getProfitMinusGas(float(miles_to_load), float(load[1].mileage), float(load[1].price))
+        if net_profit > greatest_profit:  #add positive
+            greatest_profit = net_profit
+            load_candidate = load[1].load_id
+        
+    
+    if not load_candidate == None:
+        return (load_candidate, greatest_profit)
+    else:
+        return(load_candidate, "no profit")
+    
+
+def _classifier(distance):
+    if distance <  200:
+        return 'Short'
+    return 'Long'

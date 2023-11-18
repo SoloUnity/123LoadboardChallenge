@@ -1,7 +1,6 @@
 import paho.mqtt.client as mqtt
 import json
-from KDTreeLoads import KDTree  # Import KDTree class
-
+from truckerFindLoads import trucker_find_loads
 #Breaks if we turn it into a class, so we're not gonna touch what works
 
 
@@ -19,6 +18,7 @@ def mqttParser(kdTree):
     topic = "CodeJam"
 
     trucks = dict()
+    loads = dict()
 
     # Callback when the client receives a CONNACK response from the server.
     def on_connect(client, userdata, flags, rc):
@@ -31,7 +31,7 @@ def mqttParser(kdTree):
 
     # Callback when a message is received from the server.
     def on_message(client, userdata, msg):
-        nonlocal trucks 
+        nonlocal trucks, loads
         try:
             data = json.loads(msg.payload.decode())
             msg_type = data.get("type", "Unknown")
@@ -43,6 +43,7 @@ def mqttParser(kdTree):
             elif msg_type == "End":
                 print("End message received at timestamp:", data.get("timestamp"))
                 trucks = {}
+                loads = {}
             elif msg_type == "Truck":
                 truck_id = data.get("truckId")
                 latitude = data['positionLatitude']
@@ -50,15 +51,20 @@ def mqttParser(kdTree):
                 truck_type = data["equipType"]
                 time = data["timestamp"]
                 next_trip_preference = data["nextTripLengthPreference"]
+                # if truck_id not in trucks:
+                #     print(f"Truck {truck_id} at position ({latitude}, {longitude})")
 
                 trucks[truck_id] = {
                     "point": (latitude,longitude),
                     "truck_type": truck_type,
                     "time": time,
-                    "next_trip_preference": next_trip_preference
+                    "next_trip_preference": next_trip_preference,
+                    "past_loads": []
                 }
+                print("---------------------------------------------------------------------------")
+                print(truck_id)
+                print(trucker_find_loads(kdTree, trucks[truck_id]))
 
-                print(f"Truck {truck_id} at position ({latitude}, {longitude})")
 
             elif msg_type == "Load":
                 load_id = data.get("loadId")
@@ -70,8 +76,9 @@ def mqttParser(kdTree):
                 mileage = data['mileage']
                 price = data['price']
 
+
                 kdTree.insert_load(origin_latitude, origin_longitude, load_id, load_type, time, mileage, price, dest_point)
-                print(f"Load {data['loadId']} from ({data['originLatitude']}, {data['originLongitude']}) to ({data['destinationLatitude']}, {data['destinationLongitude']})")
+                #print(f"Load {data['loadId']} from ({data['originLatitude']}, {data['originLongitude']}) to ({data['destinationLatitude']}, {data['destinationLongitude']})")
             else:
                 print(f"Received message '{msg.payload.decode()}' on topic '{msg.topic}'")
 
