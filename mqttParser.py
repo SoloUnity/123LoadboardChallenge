@@ -1,58 +1,66 @@
 import paho.mqtt.client as mqtt
-import json
 import time
 import os
+import json
 
-# MQTT connection details
-host = "fortuitous-welder.cloudmqtt.com"
-port = 1883  # non SSL port
-username = "CodeJamUser"
-password = "123CodeJam"
+class MQTTParser:
 
-# Additional settings
-clean_session = True
-qos = 1
-client_id = "SSHY01"  # Replace <team name> with your team name
-topic = "CodeJam"
+    def __init__(self, host, port, username, password, clean_session, qos, client_id, topic, log_directory):
+        # MQTT connection details
+        self.host = host
+        self.port = port
+        self.username = username
+        self.password = password
 
-# Directory to save JSON files
-log_directory = "/Users/gordon/Desktop/Hackathon/Logs"
+        # Additional settings
+        self.clean_session = clean_session
+        self.qos = qos
+        self.client_id = client_id
+        self.topic = topic
 
-# Ensure the directory exists
-os.makedirs(log_directory, exist_ok=True)
+        # Directory to save JSON files
+        self.log_directory = log_directory
 
-# Callback when the client receives a CONNACK response from the server.
-def on_connect(client, userdata, flags, rc):
-    if rc == 0:
-        print("Connected successfully")
-        client.subscribe(topic, qos=qos)
-    else:
-        print("Connection failed with code", rc)
+        # Ensure the directory exists
+        os.makedirs(self.log_directory, exist_ok=True)
 
-# Callback when a message is received from the server.
-def on_message(client, userdata, msg):
-    # Construct the file name with timestamp
-    filename = f"mqtt_message_{int(time.time())}.json"
-    file_path = os.path.join(log_directory, filename)
+        # Initialize the MQTT client
+        self.client = mqtt.Client(self.client_id, clean_session=self.clean_session)
+        self.client.username_pw_set(self.username, self.password)
+        self.client.on_connect = self.on_connect
+        self.client.on_message = self.on_message
 
-    # Write the message payload directly to a file
-    with open(file_path, "wb") as file:
-        file.write(msg.payload)
+    # Callback when the client receives a CONNACK response from the server.
+    def on_connect(self, client, userdata, flags, rc):
+        if rc == 0:
+            print("Connected successfully")
+            self.client.subscribe(self.topic, qos=self.qos)
+        else:
+            print("Connection failed with code", rc)
 
-    print(f"Message saved to {filename}")
+    # Callback when a message is received from the server.
+    def on_message(self, client, userdata, msg):
+        message_data = {
+            "topic": msg.topic,
+            "message": msg.payload.decode(),
+            "timestamp": time.strftime("%Y-%m-%d %H:%M:%S")
+        }
 
-# Create an MQTT client instance
-client = mqtt.Client(client_id, clean_session=clean_session)
+        # Construct the file name with timestamp
+        filename = f"mqtt_message_{int(time.time())}.json"
+        file_path = os.path.join(self.log_directory, filename)
 
-# Set username and password
-client.username_pw_set(username, password)
+        # Save the message data to a JSON file
+        with open(file_path, "w") as file:
+            json.dump(message_data, file, indent=4)
 
-# Assign the callbacks
-client.on_connect = on_connect
-client.on_message = on_message
+        print(f"Message saved to {filename}")
 
-# Connect to the MQTT broker
-client.connect(host, port, 60)
+    def start(self):
+        # Connect to the MQTT broker and start the loop
+        self.client.connect(self.host, self.port, 60)
+        self.client.loop_start()
 
-# Start the network loop
-client.loop_forever()
+mqtt_parser = MQTTParser("fortuitous-welder.cloudmqtt.com", 1883, "CodeJamUser", "123CodeJam", True, 1, "SSHY01", "CodeJam", "/Users/gordon/Desktop/Hackathon/Logs")
+mqtt_parser.start()
+
