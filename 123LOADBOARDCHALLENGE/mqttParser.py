@@ -1,6 +1,6 @@
 import paho.mqtt.client as mqtt
 import json
-from KDTree import KDTree  # Import KDTree class
+from KDTreeLoads import KDTree  # Import KDTree class
 
 #Breaks if we turn it into a class, so we're not gonna touch what works
 
@@ -18,6 +18,8 @@ def mqttParser(kdTree):
     client_id = "SSHY01" 
     topic = "CodeJam"
 
+    trucks = dict()
+
     # Callback when the client receives a CONNACK response from the server.
     def on_connect(client, userdata, flags, rc):
         if rc == 0:
@@ -29,6 +31,7 @@ def mqttParser(kdTree):
 
     # Callback when a message is received from the server.
     def on_message(client, userdata, msg):
+        nonlocal trucks 
         try:
             data = json.loads(msg.payload.decode())
             msg_type = data.get("type", "Unknown")
@@ -36,23 +39,38 @@ def mqttParser(kdTree):
             
             if msg_type == "Start":
                 print("Start message received at timestamp:", data.get("timestamp"))
+
             elif msg_type == "End":
                 print("End message received at timestamp:", data.get("timestamp"))
-                load = {}
-                truck = {}
+                trucks = {}
             elif msg_type == "Truck":
-                truck_id = data.get("truckID")
+                truck_id = data.get("truckId")
                 latitude = data['positionLatitude']
                 longitude = data['positionLongitude']
                 truck_type = data["equipType"]
                 time = data["timestamp"]
-                nextTripPreference = data["nextTripLengthPreference"]
-                kdTree.insert((latitude, longitude), truck_id, truck_type, time, nextTripPreference)
+                next_trip_preference = data["nextTripLengthPreference"]
+
+                trucks[truck_id] = {
+                    "point": (latitude,longitude),
+                    "truck_type": truck_type,
+                    "time": time,
+                    "next_trip_preference": next_trip_preference
+                }
 
                 print(f"Truck {truck_id} at position ({latitude}, {longitude})")
 
             elif msg_type == "Load":
-                load[data.get("loadID")] = (data['timestamp'], data['positionLatitude'], data['positionLongitude'], )
+                load_id = data.get("loadId")
+                time = data['timestamp']
+                load_type = data['equipmentType']
+                origin_latitude = data['originLatitude']
+                origin_longitude = data['originLongitude']
+                dest_point = (data['destinationLatitude'],data['destinationLongitude'])
+                mileage = data['mileage']
+                price = data['price']
+
+                kdTree.insert_load(origin_latitude, origin_longitude, load_id, load_type, time, mileage, price, dest_point)
                 print(f"Load {data['loadId']} from ({data['originLatitude']}, {data['originLongitude']}) to ({data['destinationLatitude']}, {data['destinationLongitude']})")
             else:
                 print(f"Received message '{msg.payload.decode()}' on topic '{msg.topic}'")
