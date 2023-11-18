@@ -2,7 +2,7 @@ import sys
 import os
 import unittest
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from kdTrees import KDTree  # Updated import to reflect the new class-based structure
+from KDTree import KDTree  # Updated import to reflect the new class-based structure
 
 class TestKDTreeFunctionality(unittest.TestCase):
 
@@ -14,7 +14,7 @@ class TestKDTreeFunctionality(unittest.TestCase):
             {"truck_id": 114, "point": (40.32124710083008, -86.74946594238281), "truck_type": "Van"}
         ]
         for truck in self.sample_trucks:
-            self.kd_tree.insert(truck["point"], truck["truck_id"], truck["truck_type"])
+            self.kd_tree.insert(truck["point"], truck["truck_id"], truck["truck_type"], )
 
     def test_getTruckByID(self):
         # Adjusted test to account for truck updates

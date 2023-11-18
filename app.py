@@ -1,2 +1,6 @@
-import mqttParser
-mqttParser.mqttParser()
+from mqttParser import mqttParser
+from KDTree import KDTree
+
+kdTree = KDTree()
+
+mqttParser.mqttParser(kdTree)

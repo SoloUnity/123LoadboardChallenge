@@ -1,9 +1,11 @@
 import paho.mqtt.client as mqtt
 import json
+from KDTree import KDTree  # Import KDTree class
+
+#Breaks if we turn it into a class, so we're not gonna touch what works
 
 
-    
-def mqttParser():
+def mqttParser(kdTree):
     # MQTT connection details
     host = "fortuitous-welder.cloudmqtt.com"
     port = 1883  # non SSL port
@@ -13,7 +15,7 @@ def mqttParser():
     # Additional settings
     clean_session = True
     qos = 1
-    client_id = "SSHY01"  # Replace <team name> with your team name
+    client_id = "SSHY01" 
     topic = "CodeJam"
 
     # Callback when the client receives a CONNACK response from the server.
@@ -31,6 +33,7 @@ def mqttParser():
             data = json.loads(msg.payload.decode())
             msg_type = data.get("type", "Unknown")
 
+            
             if msg_type == "Start":
                 print("Start message received at timestamp:", data.get("timestamp"))
             elif msg_type == "End":
@@ -38,10 +41,16 @@ def mqttParser():
                 load = {}
                 truck = {}
             elif msg_type == "Truck":
-                latitude = data['positionLongitude']
+                truck_id = data.get("truckID")
+                latitude = data['positionLatitude']
                 longitude = data['positionLongitude']
-                truck[data.get("truckID")] = (data['timestamp'], data['positionLatitude'], data['positionLongitude'])
-                print(f"Truck {data['truckId']} at position ({data['positionLatitude']}, {data['positionLongitude']})")
+                truck_type = data["equipType"]
+                time = data["timestamp"]
+                nextTripPreference = data["nextTripLengthPreference"]
+                kdTree.insert((latitude, longitude), truck_id, truck_type, time, nextTripPreference)
+
+                print(f"Truck {truck_id} at position ({latitude}, {longitude})")
+
             elif msg_type == "Load":
                 load[data.get("loadID")] = (data['timestamp'], data['positionLatitude'], data['positionLongitude'], )
                 print(f"Load {data['loadId']} from ({data['originLatitude']}, {data['originLongitude']}) to ({data['destinationLatitude']}, {data['destinationLongitude']})")

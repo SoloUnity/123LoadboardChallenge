@@ -1,9 +1,11 @@
 class KDTree:
     class KDNode:
-        def __init__(self, point, truck_id, truck_type, left=None, right=None):
+        def __init__(self, point, truck_id, truck_type, left=None, right=None, time=None, nextTripPreference=None):
             self.point = point  # (latitude, longitude)
             self.truck_id = truck_id
             self.truck_type = truck_type
+            self.time = time
+            self.nextTripPreference = nextTripPreference
             self.left = left
             self.right = right
 
