@@ -98,7 +98,7 @@ def mqttParser(kdTreeLong, kdTreeShort):
                 else:
                     waiting_queue.put(truck_id)
 
-            time.sleep(2)  # Adjust the sleep interval as needed
+            time.sleep(10)  # Adjust the sleep interval as needed
 
     check_queue_thread = threading.Thread(target=check_waiting_queue, args=(message_queue,))
     check_queue_thread.daemon = True  # The thread will exit when the main program exits
@@ -203,7 +203,13 @@ def mqttParser(kdTreeLong, kdTreeShort):
     client.connect(host, port, 60)
 
     # Start the network loop
-    client.loop_forever()
+    try:
+        while True:
+            client.loop(timeout=1)  # Process network events with a timeout
+            time.sleep(1)  # Adjust the sleep interval as needed
+    except KeyboardInterrupt:
+        print("Received KeyboardInterrupt. Stopping the program.")
+        client.disconnect()  # Disconnect from the MQTT broker
 
 def mqtt_main():
     global kdTree
