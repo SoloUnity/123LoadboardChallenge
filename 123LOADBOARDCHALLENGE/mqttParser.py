@@ -64,7 +64,7 @@ def mqttParser(kdTree):
                 }
                 print("---------------------------------------------------------------------------")
                 print(truck_id)
-                print(trucker_find_loads(kdTree, trucks[truck_id]))
+                print(trucker_find_loads(kdTree, truck_id, trucks[truck_id]))
 
 
             elif msg_type == "Load":
