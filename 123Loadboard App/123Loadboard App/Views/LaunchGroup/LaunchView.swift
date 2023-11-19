@@ -21,7 +21,7 @@ struct LaunchView: View {
             
             
             // Displays login if the user is not authenticated
-            if !isAuthenticatedStored && !authAPIModel.isAuthenticated  {
+            if !authAPIModel.isAuthenticated  {
                 
                 LoginView()
 //                // Detect authorization status of geolocating the user
