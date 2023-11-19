@@ -80,7 +80,7 @@ def mqttParser(kdTreeLong, kdTreeShort):
     loads = dict()
     waiting_queue = queue.Queue()
 
-    def check_waiting_queue():
+    def check_waiting_queue(message_queue):
         while True:
             if not waiting_queue.empty():
                 truck_id = waiting_queue.get()
@@ -93,7 +93,7 @@ def mqttParser(kdTreeLong, kdTreeShort):
 
             time.sleep(10)  # Adjust the sleep interval as needed
 
-    check_queue_thread = threading.Thread(target=check_waiting_queue)
+    check_queue_thread = threading.Thread(target=check_waiting_queue, args=(message_queue))
     check_queue_thread.daemon = True  # The thread will exit when the main program exits
     check_queue_thread.start()
 
