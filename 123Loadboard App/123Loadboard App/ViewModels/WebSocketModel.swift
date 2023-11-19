@@ -17,7 +17,7 @@ class Websocket: ObservableObject {
     }
     
     private func connect() {
-        guard let url = URL(string: "ws://localhost:8080/") else { return }
+        guard let url = URL(string: "ws://localhost:8765/") else { return }
         let request = URLRequest(url: url)
         webSocketTask = URLSession.shared.webSocketTask(with: request)
         webSocketTask?.resume()
@@ -32,7 +32,7 @@ class Websocket: ObservableObject {
             case .success(let message):
                 switch message {
                 case .string(let text):
-                    self.messages.append(text)
+                    print(text)
                 case .data(let data):
                     break
                 @unknown default:
