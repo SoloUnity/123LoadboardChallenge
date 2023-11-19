@@ -18,7 +18,7 @@ def trucker_find_loads(KDTreeLong, KDTreeShort, truck_id, truck):
         info = None
         destination_ls = []
         for load in potential_loads:
-            dest_coords = load['load_details']["dest_coords"]
+            dest_coords = load["coords"]
             destination_ls.append(dest_coords)
         if len(destination_ls) != 0:
             google_distance_ls = google_distance_matrix(truck["coords"], destination_ls)
@@ -36,7 +36,7 @@ def trucker_find_loads(KDTreeLong, KDTreeShort, truck_id, truck):
     load_candidate_id, greatest_profit, load_candidate, info = _helper()
 
     if not load_candidate_id == None:
-        return (load_candidate_id, truck_id, greatest_profit, load_candidate['load_details']['mileage'], load_candidate['load_details']['price'], truck["coords"], load_candidate["coords"], info[0])
+        return (load_candidate_id, truck_id, greatest_profit)
 
     if short:
         working_KD_Tree = copy.deepcopy(KDTreeLong)
@@ -44,6 +44,6 @@ def trucker_find_loads(KDTreeLong, KDTreeShort, truck_id, truck):
         working_KD_Tree = copy.deepcopy(KDTreeShort)
     load_candidate_id, greatest_profit, load_candidate, info = _helper()
     if not load_candidate_id == None:
-        return (load_candidate_id, truck_id, greatest_profit, load_candidate['load_details']['mileage'], load_candidate['load_details']['price'], truck["coords"], load_candidate["coords"], info[0])
+        return (load_candidate_id, truck_id, greatest_profit)
     return(load_candidate_id, truck_id, "negative profit")
     

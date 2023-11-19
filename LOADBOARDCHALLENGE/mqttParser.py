@@ -1,6 +1,9 @@
 import paho.mqtt.client as mqtt
 import json
 from truckerFindLoads import trucker_find_loads
+import queue
+import time
+import threading
 #Breaks if we turn it into a class, so we're not gonna touch what works
 
 
@@ -19,6 +22,26 @@ def mqttParser(kdTreeLong, kdTreeShort):
 
     trucks = dict()
     loads = dict()
+
+    waiting_queue = queue.Queue()
+
+    def check_waiting_queue():
+        while True:
+            if not waiting_queue.empty():
+                truck_id = waiting_queue.get()
+                result = trucker_find_loads(kdTreeLong, kdTreeShort, truck_id, trucks[truck_id])
+                
+                if result[2] != "negative profit":
+                    print(f"Update: Driver {truck_id} found a new load: {result}")
+                else:
+                    waiting_queue.put(truck_id)
+
+            time.sleep(10)  # Adjust the sleep interval as needed
+
+    check_queue_thread = threading.Thread(target=check_waiting_queue)
+    check_queue_thread.daemon = True  # The thread will exit when the main program exits
+    check_queue_thread.start()
+
 
     # Callback when the client receives a CONNACK response from the server.
     def on_connect(client, userdata, flags, rc):
@@ -64,7 +87,11 @@ def mqttParser(kdTreeLong, kdTreeShort):
                 }
                 print("---------------------------------------------------------------------------")
                 print(truck_id)
-                print(trucker_find_loads(kdTreeLong, kdTreeShort, truck_id, trucks[truck_id]))
+                load_info = trucker_find_loads(kdTreeLong, kdTreeShort, truck_id, trucks[truck_id])
+                print(load_info)
+                if load_info[2] == "negative profit":
+            # Put the truck back in the queue for later processing
+                    waiting_queue.put(truck_id)
 
 
             elif msg_type == "Load":
@@ -83,7 +110,7 @@ def mqttParser(kdTreeLong, kdTreeShort):
                     kdTreeShort.insert_load(origin_latitude, origin_longitude, load_id, load_type, load_details)
                 else:
                     kdTreeLong.insert_load(origin_latitude, origin_longitude, load_id, load_type, load_details)
-                print(f"Load {data['loadId']} from ({data['originLatitude']}, {data['originLongitude']}) to ({data['destinationLatitude']}, {data['destinationLongitude']})")
+                #print(f"Load {data['loadId']} from ({data['originLatitude']}, {data['originLongitude']}) to ({data['destinationLatitude']}, {data['destinationLongitude']})")
             else:
                 print(f"Received message '{msg.payload.decode()}' on topic '{msg.topic}'")
 
@@ -105,3 +132,6 @@ def mqttParser(kdTreeLong, kdTreeShort):
 
     # Start the network loop
     client.loop_forever()
+    
+    
+    
