@@ -71,7 +71,7 @@ async def close_websocket_connection():
         websocket_connection = None
         print("WebSocket connection closed")
 
-def mqttParser(kdTreeLong, kdTreeShort):
+def mqttParser(kdTreeLong, kdTreeShort, message_queue):
     global start_event_received
 
     # MQTT connection details
@@ -97,7 +97,6 @@ def mqttParser(kdTreeLong, kdTreeShort):
                 result = trucker_find_loads(kdTreeLong, kdTreeShort, truck_id, trucks[truck_id])
                 
                 if result[2] != "negative profit":
-                    print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
                     print(f"Update: Driver {truck_id} found a new load: {result}")
                     message_queue.put(json.dumps({
                     "truck_id": truck_id,
@@ -216,20 +215,21 @@ def mqttParser(kdTreeLong, kdTreeShort):
     client.connect(host, port, 60)
 
     # Start the network loop
-    try:
-        while True:
-            client.loop(timeout=1)  # Process network events with a timeout
-            time.sleep(1)  # Adjust the sleep interval as needed
-    except KeyboardInterrupt:
-        print("Received KeyboardInterrupt. Stopping the program.")
-        client.disconnect()  # Disconnect from the MQTT broker
+    # try:
+    #     while True:
+    #         client.loop(timeout=0.0001)  # Process network events with a timeout
+    #         time.sleep(0.0001)  # Adjust the sleep interval as needed
+    # except KeyboardInterrupt:
+    #     print("Received KeyboardInterrupt. Stopping the program.")
+    #     client.disconnect()  # Disconnect from the MQTT broker
+    client.loop_forever()
 
 def mqtt_main():
     global kdTree
     global kdTreeShort
     kdTreeLong = KDTree()
     kdTreeShort = KDTree()
-    mqttParser(kdTreeLong, kdTreeShort)
+    mqttParser(kdTreeLong, kdTreeShort, message_queue)
 
 if __name__ == "__main__":
     websocket_thread = threading.Thread(target=run_websocket_thread, daemon=True)
