@@ -82,10 +82,11 @@ def mqttParser(kdTreeLong, kdTreeShort):
 
     def check_waiting_queue(message_queue):
         while True:
+            print("IS CHECKING")
             if not waiting_queue.empty():
+ 
                 truck_id = waiting_queue.get()
                 result = trucker_find_loads(kdTreeLong, kdTreeShort, truck_id, trucks[truck_id])
-                
                 if result[2] != "negative profit":
                     print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
                     print(f"Update: Driver {truck_id} found a new load: {result}")
@@ -99,7 +100,7 @@ def mqttParser(kdTreeLong, kdTreeShort):
 
             time.sleep(2)  # Adjust the sleep interval as needed
 
-    check_queue_thread = threading.Thread(target=check_waiting_queue, args=(message_queue))
+    check_queue_thread = threading.Thread(target=check_waiting_queue, args=(message_queue,))
     check_queue_thread.daemon = True  # The thread will exit when the main program exits
     check_queue_thread.start()
 
@@ -151,12 +152,12 @@ def mqttParser(kdTreeLong, kdTreeShort):
                 print("---------------------------------------------------------------------------")
                 print(truck_id)
                 load_info = trucker_find_loads(kdTreeLong, kdTreeShort, truck_id, trucks[truck_id])
-                print(load_info)
-                message_queue.put(json.dumps({
-                "truck_id": truck_id,
-                "load_id": load_info[0],
-                'type' : "notification"
-                }))
+                if load_info[2] != "negative profit":
+                    message_queue.put(json.dumps({
+                        "truck_id": truck_id,
+                        "load_id": load_info[0],
+                        'type' : "notification"
+                    }))
                 if load_info[2] == "negative profit":
             # Put the truck back in the queue for later processing
                     print("**********************************************************")
