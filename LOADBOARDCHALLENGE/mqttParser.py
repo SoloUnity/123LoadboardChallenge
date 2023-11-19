@@ -87,11 +87,17 @@ def mqttParser(kdTreeLong, kdTreeShort):
                 result = trucker_find_loads(kdTreeLong, kdTreeShort, truck_id, trucks[truck_id])
                 
                 if result[2] != "negative profit":
+                    print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
                     print(f"Update: Driver {truck_id} found a new load: {result}")
+                    message_queue.put(json.dumps({
+                    "truck_id": truck_id,
+                    "load_id": result[0],
+                    'type' : "notification"
+                    }))
                 else:
                     waiting_queue.put(truck_id)
 
-            time.sleep(10)  # Adjust the sleep interval as needed
+            time.sleep(2)  # Adjust the sleep interval as needed
 
     check_queue_thread = threading.Thread(target=check_waiting_queue, args=(message_queue))
     check_queue_thread.daemon = True  # The thread will exit when the main program exits
@@ -146,14 +152,20 @@ def mqttParser(kdTreeLong, kdTreeShort):
                 print(truck_id)
                 load_info = trucker_find_loads(kdTreeLong, kdTreeShort, truck_id, trucks[truck_id])
                 print(load_info)
+                message_queue.put(json.dumps({
+                "truck_id": truck_id,
+                "load_id": load_info[0],
+                'type' : "notification"
+                }))
                 if load_info[2] == "negative profit":
             # Put the truck back in the queue for later processing
+                    print("**********************************************************")
+
                     waiting_queue.put(truck_id)
 
 
             elif msg_type == "Load":
                 load_id = data.get("loadId")
-
                 load_type = data['equipmentType']
                 origin_latitude = data['originLatitude']
                 origin_longitude = data['originLongitude']
