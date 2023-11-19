@@ -9,27 +9,37 @@ import threading
 import time
 
 message_queue = queue.Queue()
-#Breaks if we turn it into a class, so we're not gonna touch what works
-
 uri = "ws://localhost:8765"
 websocket_connection = None
-
-
-#TODO: make this so that it does not open and close a connection every time it sends a message
+start_event_received = False
 
 async def websocket_thread_func():
-    global websocket_connection
+    global websocket_connection, start_event_received
     while True:
-        if not websocket_connection or websocket_connection.closed:
-            websocket_connection = await websockets.connect(uri)
-            print("WebSocket connection established")
-        
-        message = await asyncio.to_thread(message_queue.get)
-        if websocket_connection:
-            await websocket_connection.send(message)
-            print(f"Sent to server: {message}")
-        else:
-            print("WebSocket connection is not available")
+        try:
+            if not websocket_connection or websocket_connection.closed:
+                websocket_connection = await websockets.connect(uri)
+                print("WebSocket connection established")
+
+            # Check if start event is received before sending messages
+            if start_event_received:
+                message = await asyncio.to_thread(message_queue.get)
+                if websocket_connection and not websocket_connection.closed:
+                    await websocket_connection.send(message)
+                    print(f"Sent to server: {message}")
+                else:
+                    print("WebSocket connection is not available")
+            else:
+                await asyncio.sleep(1)  # Wait and check again
+
+        except websockets.ConnectionClosedError as e:
+            print(f"WebSocket connection closed unexpectedly: {e}")
+            websocket_connection = None
+            await asyncio.sleep(1)  # Wait before attempting to reconnect
+
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
+
 
 def run_websocket_thread():
     loop = asyncio.new_event_loop()
@@ -62,7 +72,7 @@ async def close_websocket_connection():
         print("WebSocket connection closed")
 
 def mqttParser(kdTreeLong, kdTreeShort):
-    start_websocket_connection()
+    global start_event_received
 
     # MQTT connection details
     host = "fortuitous-welder.cloudmqtt.com"
@@ -109,6 +119,8 @@ def mqttParser(kdTreeLong, kdTreeShort):
     # Callback when a message is received from the server.
     def on_message(client, userdata, msg):
         nonlocal trucks, loads
+        global start_event_received
+
         try:
             data = json.loads(msg.payload.decode())
             msg_type = data.get("type", "Unknown")
@@ -116,11 +128,13 @@ def mqttParser(kdTreeLong, kdTreeShort):
             
             if msg_type == "Start":
                 print("Start message received at timestamp:", data.get("timestamp"))
-                asyncio.run_coroutine_threadsafe(start_websocket_connection(), websocket_event_loop)
+                start_event_received = True
+                asyncio.run_coroutine_threadsafe(start_websocket_connection(), asyncio.get_event_loop())
 
             elif msg_type == "End":
                 print("End message received at timestamp:", data.get("timestamp"))
-                asyncio.run_coroutine_threadsafe(close_websocket_connection(), asyncio.get_event_loop())
+                start_event_received = False
+                # asyncio.run_coroutine_threadsafe(close_websocket_connection(), asyncio.get_event_loop())
                 trucks = {}
                 loads = {}
 
@@ -144,11 +158,12 @@ def mqttParser(kdTreeLong, kdTreeShort):
                 }
                 print("---------------------------------------------------------------------------")
                 print(truck_id)
-                load_info = trucker_find_loads(kdTreeLong, kdTreeShort, truck_id, trucks[truck_id])
-                print(load_info)
-                if load_info[2] == "negative profit":
-            # Put the truck back in the queue for later processing
-                    waiting_queue.put(truck_id)
+                print(data.get("seq"))
+                if start_event_received:
+                    load_info = trucker_find_loads(kdTreeLong, kdTreeShort, truck_id, trucks[truck_id])
+                    print(load_info)
+                    if load_info[2] == "negative profit":
+                        waiting_queue.put(truck_id)
 
 
             elif msg_type == "Load":
