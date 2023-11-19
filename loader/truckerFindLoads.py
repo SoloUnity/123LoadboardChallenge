@@ -3,15 +3,16 @@ import copy
 
 def trucker_find_loads(KDTree, truck):
     working_KD_Tree = copy.deepcopy(KDTree)
-    potential_loads = working_KD_Tree.find_k_closest_loads(truck["point"])
+    potential_loads = working_KD_Tree.find_k_closest_loads(truck["coords"])
     greatest_profit = 0
+    load_candidate = None
     for load in potential_loads:
-        miles_to_load = -load[0] #distance_matrix_api()
-        trip_length = _classifier(float(load[1].mileage))
-        net_profit = getProfitMinusGas(float(miles_to_load), float(load[1].mileage), float(load[1].price))
+        miles_to_load = load['distance'] #distance_matrix_api()
+        trip_length = _classifier(float(load['load_details']['mileage']))
+        net_profit = getProfitMinusGas(float(miles_to_load), float(load['load_details']['mileage']), load['load_details']['price'])
         if net_profit > greatest_profit:  #add positive
             greatest_profit = net_profit
-            load_candidate = load[1].load_id
+            load_candidate = load["load_id"]
         
     
     if not load_candidate == None:

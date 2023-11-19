@@ -29,17 +29,17 @@ class KDTree:
         closest_loads = []
         self._find_k_closest_loads(self.root, target_coords, closest_loads, k)
         
-        loads = {}  # Dictionary to store load details with load ID as keys
+        loads = []  # List to store load details with load ID as keys
 
-        for node in closest_loads:
-            load_id = node[1].load_id
+        for distance, node in closest_loads:
             load = {
-                "load_type": node[1].load_type,
-                "coords": node[1].coords,
-                "load_details": node[1].load_details,
-                "distance": node[0]
+                'load_id' : node.load_id,
+                "load_type": node.load_type,
+                "coords": node.coords,
+                "load_details": node.load_details,
+                "distance": distance
             }
-            loads[load_id] = load
+            loads.append(load)
         return loads
 
     def _find_k_closest_loads(self, root, target_coords, closest_loads, k, depth=0):
@@ -50,20 +50,20 @@ class KDTree:
 
         if len(closest_loads) < k:
             closest_loads.append((distance, root))
-        elif distance < closest_loads[k - 1][0]:
-            closest_loads[k - 1] = (distance, root)
+        elif distance < closest_loads[0][0]:
+            closest_loads[0] = (distance, root)
         
-        closest_loads.sort()  
+        closest_loads.sort( reverse= True)  
 
         x_or_y = depth % 2
 
         if target_coords[x_or_y] < root.coords[x_or_y]:
             self._find_k_closest_loads(root.left, target_coords, closest_loads, k, depth + 1)
-            if abs(target_coords[x_or_y] - root.coords[x_or_y]) < closest_loads[k - 1][0]:
+            if abs(target_coords[x_or_y] - root.coords[x_or_y]) < closest_loads[0][0]:
                 self._find_k_closest_loads(root.right, target_coords, closest_loads, k, depth + 1)
         else:
             self._find_k_closest_loads(root.right, target_coords, closest_loads, k, depth + 1)
-            if abs(target_coords[x_or_y] - root.coords[x_or_y]) < closest_loads[k - 1][0]:
+            if abs(target_coords[x_or_y] - root.coords[x_or_y]) < closest_loads[0][0]:
                 self._find_k_closest_loads(root.left, target_coords, closest_loads, k, depth + 1)
 
     def _insertKDNode(self, root, coords, load_id, load_type, load_details, depth=0):
