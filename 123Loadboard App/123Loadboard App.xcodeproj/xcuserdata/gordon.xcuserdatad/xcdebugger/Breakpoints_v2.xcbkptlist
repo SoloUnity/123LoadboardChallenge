@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bucket
+   uuid = "ED22FB92-B442-47CE-91FB-6A6500A34608"
+   type = "1"
+   version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "76F6BB43-7E6D-4FFF-B72A-A94CADC96FB8"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "123Loadboard App/Views/HomeGroup/LoadListView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "50"
+            endingLineNumber = "50"
+            landmarkName = "fetchRoute(truckModel:load:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "C8F5D421-0A18-425C-9565-7FB22C29BE84"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "123Loadboard App/Views/HomeGroup/LoadListView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "51"
+            endingLineNumber = "51"
+            landmarkName = "fetchRoute(truckModel:load:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "5775655C-FBB4-4936-8886-81E13AA75863"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "123Loadboard App/Views/HomeGroup/LoadListView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "60"
+            endingLineNumber = "60"
+            landmarkName = "fetchRoute(truckModel:load:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "5775655C-FBB4-4936-8886-81E13AA75863 - 8bf65dec6c4d3704"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for closure #1 @Sendable () async -&gt; () in _23Loadboard_App.LoadListView.fetchRoute(truckModel: _23Loadboard_App.TruckModel, load: _23Loadboard_App.Load) -&gt; ()"
+                  moduleName = "123Loadboard App"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/gordon/Desktop/Hackathon/123Loadboard%20App/123Loadboard%20App/Views/HomeGroup/LoadListView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "47"
+                  endingLineNumber = "47"
+                  offsetFromSymbolStart = "92">
+               </Location>
+               <Location
+                  uuid = "5775655C-FBB4-4936-8886-81E13AA75863 - b2263db1573eb536"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(2) await resume partial function for closure #1 @Sendable () async -&gt; () in _23Loadboard_App.LoadListView.fetchRoute(truckModel: _23Loadboard_App.TruckModel, load: _23Loadboard_App.Load) -&gt; ()"
+                  moduleName = "123Loadboard App"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/gordon/Desktop/Hackathon/123Loadboard%20App/123Loadboard%20App/Views/HomeGroup/LoadListView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "47"
+                  endingLineNumber = "47"
+                  offsetFromSymbolStart = "52">
+               </Location>
+               <Location
+                  uuid = "5775655C-FBB4-4936-8886-81E13AA75863 - 20657aad8128ab12"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for closure #1 @Sendable () async -&gt; () in _23Loadboard_App.LoadListView.fetchRoute(truckModel: _23Loadboard_App.TruckModel, load: _23Loadboard_App.Load) -&gt; ()"
+                  moduleName = "123Loadboard App"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/gordon/Desktop/Hackathon/123Loadboard%20App/123Loadboard%20App/Views/HomeGroup/LoadListView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "47"
+                  endingLineNumber = "47"
+                  offsetFromSymbolStart = "68">
+               </Location>
+               <Location
+                  uuid = "5775655C-FBB4-4936-8886-81E13AA75863 - 6b2c890eaf7a5d69"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(4) suspend resume partial function for closure #1 @Sendable () async -&gt; () in _23Loadboard_App.LoadListView.fetchRoute(truckModel: _23Loadboard_App.TruckModel, load: _23Loadboard_App.Load) -&gt; ()"
+                  moduleName = "123Loadboard App"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/gordon/Desktop/Hackathon/123Loadboard%20App/123Loadboard%20App/Views/HomeGroup/LoadListView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "47"
+                  endingLineNumber = "47"
+                  offsetFromSymbolStart = "68">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
+</Bucket>

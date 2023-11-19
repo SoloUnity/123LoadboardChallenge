@@ -42,17 +42,17 @@ def mqttParser(kdTree):
                 truck = {}
             elif msg_type == "Truck":
                 truck_id = data.get("truckID")
-                latitude = data['positionLatitude']
-                longitude = data['positionLongitude']
-                truck_type = data["equipType"]
-                time = data["timestamp"]
-                nextTripPreference = data["nextTripLengthPreference"]
-                kdTree.insert((latitude, longitude), truck_id, truck_type, time, nextTripPreference)
+                latitude = data.get("positionLatitude")
+                longitude = data.get("positionLongitude")
+                truck_type = data.get("equipType")
+                time = data.get("timestamp")
+                nextTripPreference = data.get("nextTripLengthPreference")
+                #kdTree.insert((latitude, longitude), truck_id, truck_type, time, nextTripPreference)
 
-                print(f"Truck {truck_id} at position ({latitude}, {longitude})")
+                print(f"Truck {str(truck_id)} at position ({latitude}, {longitude})")
 
             elif msg_type == "Load":
-                load[data.get("loadID")] = (data['timestamp'], data['positionLatitude'], data['positionLongitude'], )
+                #load[data.get("loadID")] = (data['timestamp'], data['positionLatitude'], data['positionLongitude'], )
                 print(f"Load {data['loadId']} from ({data['originLatitude']}, {data['originLongitude']}) to ({data['destinationLatitude']}, {data['destinationLongitude']})")
             else:
                 print(f"Received message '{msg.payload.decode()}' on topic '{msg.topic}'")
