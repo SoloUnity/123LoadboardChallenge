@@ -1,13 +1,69 @@
 import paho.mqtt.client as mqtt
 import json
+import asyncio
 from truckerFindLoads import trucker_find_loads
+import websockets
 import queue
-import time
+from KDTreeLoads import KDTree
 import threading
+import time
+
+message_queue = queue.Queue()
 #Breaks if we turn it into a class, so we're not gonna touch what works
 
+uri = "ws://localhost:8765"
+websocket_connection = None
+
+
+#TODO: make this so that it does not open and close a connection every time it sends a message
+
+async def websocket_thread_func():
+    global websocket_connection
+    while True:
+        if not websocket_connection or websocket_connection.closed:
+            websocket_connection = await websockets.connect(uri)
+            print("WebSocket connection established")
+        
+        message = await asyncio.to_thread(message_queue.get)
+        if websocket_connection:
+            await websocket_connection.send(message)
+            print(f"Sent to server: {message}")
+        else:
+            print("WebSocket connection is not available")
+
+def run_websocket_thread():
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(websocket_thread_func())
+
+async def start_websocket_connection():
+    global websocket_connection
+    if not websocket_connection or websocket_connection.closed:
+        websocket_connection = await websockets.connect(uri)
+        print("WebSocket connection established")
+
+def send_to_websocket(data_to_send):
+    loop = asyncio.get_event_loop()
+    loop.create_task(_send_to_websocket(data_to_send))
+
+async def _send_to_websocket(data_to_send):
+    global websocket_connection
+    if websocket_connection and not websocket_connection.closed:
+        await websocket_connection.send(data_to_send)
+        print(f"Sent to server: {data_to_send}")
+    else:
+        print("WebSocket connection is not available")
+
+async def close_websocket_connection():
+    global websocket_connection
+    if websocket_connection:
+        await websocket_connection.close()
+        websocket_connection = None
+        print("WebSocket connection closed")
 
 def mqttParser(kdTreeLong, kdTreeShort):
+    start_websocket_connection()
+
     # MQTT connection details
     host = "fortuitous-welder.cloudmqtt.com"
     port = 1883  # non SSL port
@@ -17,12 +73,11 @@ def mqttParser(kdTreeLong, kdTreeShort):
     # Additional settings
     clean_session = True
     qos = 1
-    client_id = "SSHY01" 
+    client_id = "SSHY03"
     topic = "CodeJam"
 
     trucks = dict()
     loads = dict()
-
     waiting_queue = queue.Queue()
 
     def check_waiting_queue():
@@ -41,7 +96,6 @@ def mqttParser(kdTreeLong, kdTreeShort):
     check_queue_thread = threading.Thread(target=check_waiting_queue)
     check_queue_thread.daemon = True  # The thread will exit when the main program exits
     check_queue_thread.start()
-
 
     # Callback when the client receives a CONNACK response from the server.
     def on_connect(client, userdata, flags, rc):
@@ -62,11 +116,14 @@ def mqttParser(kdTreeLong, kdTreeShort):
             
             if msg_type == "Start":
                 print("Start message received at timestamp:", data.get("timestamp"))
+                asyncio.run_coroutine_threadsafe(start_websocket_connection(), websocket_event_loop)
 
             elif msg_type == "End":
                 print("End message received at timestamp:", data.get("timestamp"))
+                asyncio.run_coroutine_threadsafe(close_websocket_connection(), asyncio.get_event_loop())
                 trucks = {}
                 loads = {}
+
             elif msg_type == "Truck":
                 
                 truck_id = data.get("truckId")
@@ -114,6 +171,8 @@ def mqttParser(kdTreeLong, kdTreeShort):
             else:
                 print(f"Received message '{msg.payload.decode()}' on topic '{msg.topic}'")
 
+            message_queue.put(msg.payload.decode())
+
         except json.JSONDecodeError:
             print("Invalid JSON received:", msg.payload.decode())
 
@@ -132,6 +191,15 @@ def mqttParser(kdTreeLong, kdTreeShort):
 
     # Start the network loop
     client.loop_forever()
-    
-    
-    
+
+def mqtt_main():
+    global kdTree
+    global kdTreeShort
+    kdTreeLong = KDTree()
+    kdTreeShort = KDTree()
+    mqttParser(kdTreeLong, kdTreeShort)
+
+if __name__ == "__main__":
+    websocket_thread = threading.Thread(target=run_websocket_thread, daemon=True)
+    websocket_thread.start()
+    mqtt_main()
