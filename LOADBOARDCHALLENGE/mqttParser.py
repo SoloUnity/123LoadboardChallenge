@@ -1,23 +1,10 @@
 import paho.mqtt.client as mqtt
 import json
-import asyncio
 from truckerFindLoads import trucker_find_loads
-import websockets
 #Breaks if we turn it into a class, so we're not gonna touch what works
 
-uri = "ws://localhost:8765"
 
-#TODO: make this so that it does not open and close a connection every time it sends a message
-async def send_to_websocket(data_to_send):
-    async with websockets.connect(uri) as websocket:
-        await websocket.send(data_to_send)
-        print(f"Sent to server: {data_to_send}")
-
-        # Optionally, handle server response
-        response = await websocket.recv()
-        print(f"Received from server: {response}")
-
-def mqttParser(kdTree):
+def mqttParser(kdTreeLong, kdTreeShort):
     # MQTT connection details
     host = "fortuitous-welder.cloudmqtt.com"
     port = 1883  # non SSL port
@@ -49,7 +36,7 @@ def mqttParser(kdTree):
             data = json.loads(msg.payload.decode())
             msg_type = data.get("type", "Unknown")
 
-
+            
             if msg_type == "Start":
                 print("Start message received at timestamp:", data.get("timestamp"))
 
@@ -58,7 +45,7 @@ def mqttParser(kdTree):
                 trucks = {}
                 loads = {}
             elif msg_type == "Truck":
-
+                
                 truck_id = data.get("truckId")
                 latitude = data['positionLatitude']
                 longitude = data['positionLongitude']
@@ -77,7 +64,7 @@ def mqttParser(kdTree):
                 }
                 print("---------------------------------------------------------------------------")
                 print(truck_id)
-                print(trucker_find_loads(kdTree, truck_id, trucks[truck_id]))
+                print(trucker_find_loads(kdTreeLong, kdTreeShort, truck_id, trucks[truck_id]))
 
 
             elif msg_type == "Load":
@@ -92,18 +79,13 @@ def mqttParser(kdTree):
                     'mileage' : data['mileage'],
                     'price' : data['price']
                 }
-
-                kdTree.insert_load(origin_latitude, origin_longitude, load_id, load_type, load_details)
+                if data['mileage'] < 200:
+                    kdTreeShort.insert_load(origin_latitude, origin_longitude, load_id, load_type, load_details)
+                else:
+                    kdTreeLong.insert_load(origin_latitude, origin_longitude, load_id, load_type, load_details)
                 print(f"Load {data['loadId']} from ({data['originLatitude']}, {data['originLongitude']}) to ({data['destinationLatitude']}, {data['destinationLongitude']})")
             else:
                 print(f"Received message '{msg.payload.decode()}' on topic '{msg.topic}'")
-
-            message_to_send = json.dumps({
-                'trucks': trucks,
-                'loads': loads
-            })
-
-            asyncio.run(send_to_websocket(message_to_send))
 
         except json.JSONDecodeError:
             print("Invalid JSON received:", msg.payload.decode())

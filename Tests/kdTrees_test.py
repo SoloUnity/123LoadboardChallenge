@@ -1,5 +1,5 @@
 import unittest
-from loader import KDTreeLoads
+from LOADBOARDCHALLENGE import KDTreeLoads
 class TestKDTree(unittest.TestCase):
     def setUp(self):
         self.kdTree = KDTreeLoads.KDTree()

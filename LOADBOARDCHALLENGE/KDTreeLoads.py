@@ -1,3 +1,4 @@
+import math
 class KDTree:
     class KDNode:
         def __init__(self, coords, load_id, load_type, load_details, left=None, right=None):
@@ -56,15 +57,20 @@ class KDTree:
         closest_loads.sort( reverse= True)  
 
         x_or_y = depth % 2
-
+        
         if target_coords[x_or_y] < root.coords[x_or_y]:
             self._find_k_closest_loads(root.left, target_coords, closest_loads, k, depth + 1)
-            if abs(target_coords[x_or_y] - root.coords[x_or_y]) < closest_loads[0][0]:
+            if x_or_y ==  0 and self._distance((target_coords[x_or_y], 0), (root.coords[x_or_y], 0)) < closest_loads[0][0]:
+                self._find_k_closest_loads(root.right, target_coords, closest_loads, k, depth + 1)
+            elif x_or_y ==  1 and  self._distance((0, target_coords[x_or_y]), (0, root.coords[x_or_y])) < closest_loads[0][0]:
                 self._find_k_closest_loads(root.right, target_coords, closest_loads, k, depth + 1)
         else:
             self._find_k_closest_loads(root.right, target_coords, closest_loads, k, depth + 1)
-            if abs(target_coords[x_or_y] - root.coords[x_or_y]) < closest_loads[0][0]:
+            if x_or_y ==  0 and self._distance((target_coords[x_or_y], 0), (root.coords[x_or_y], 0)) < closest_loads[0][0]:
                 self._find_k_closest_loads(root.left, target_coords, closest_loads, k, depth + 1)
+            elif x_or_y ==  1 and  self._distance((0, target_coords[x_or_y]), (0, root.coords[x_or_y])) < closest_loads[0][0]:
+                self._find_k_closest_loads(root.left, target_coords, closest_loads, k, depth + 1)
+            
 
     def _insertKDNode(self, root, coords, load_id, load_type, load_details, depth=0):
         if root is None:
@@ -80,4 +86,17 @@ class KDTree:
         return root
 
     def _distance(self, x1, x2):
-        return ((x1[0] - x2[0]) ** 2 + (x1[1] - x2[1]) ** 2) ** 0.5
+        def haversine_degrees(lat1, lon1, lat2, lon2):
+            # Radius of the Earth in miles
+            R = 3959.0
+            
+            # Differences in coordinates in degrees
+            delta_lat = lat2 - lat1
+            delta_lon = lon2 - lon1
+            
+            # Haversine formula
+            a = math.sin(math.radians(delta_lat) / 2)**2 + math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.sin(math.radians(delta_lon) / 2)**2
+            c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+            distance = R * c
+            return distance
+        return haversine_degrees(x1[0],x1[1],x2[0],x2[1])
