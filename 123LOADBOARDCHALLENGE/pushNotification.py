@@ -2,7 +2,6 @@ import os
 from twilio.rest import Client
 import asyncio
 from websockets.server import serve
-from websockets.sync.client import connect
 
 connected = set()
 
@@ -11,7 +10,6 @@ async def echo(websocket, path):
     try:
         async for message in websocket:
             for client in connected:
-                # Remove the if condition to send the message back to the sender as well
                 await client.send(message)
     finally:
         connected.remove(websocket)
