@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F80B57AE2B0A693E00848826 /* NotificationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F80B57AD2B0A693E00848826 /* NotificationModel.swift */; };
+		F80B57B02B0A69BE00848826 /* NotificationData.swift in Sources */ = {isa = PBXBuildFile; fileRef = F80B57AF2B0A69BE00848826 /* NotificationData.swift */; };
+		F80B57B22B0A69D900848826 /* TruckData.swift in Sources */ = {isa = PBXBuildFile; fileRef = F80B57B12B0A69D900848826 /* TruckData.swift */; };
 		F81C48CC2B093F51007423A7 /* _23Loadboard_AppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F81C48CB2B093F51007423A7 /* _23Loadboard_AppApp.swift */; };
 		F81C48D02B093F52007423A7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F81C48CF2B093F52007423A7 /* Assets.xcassets */; };
 		F81C48D42B093F52007423A7 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F81C48D32B093F52007423A7 /* Preview Assets.xcassets */; };
@@ -37,6 +40,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		F80B57AD2B0A693E00848826 /* NotificationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationModel.swift; sourceTree = "<group>"; };
+		F80B57AF2B0A69BE00848826 /* NotificationData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationData.swift; sourceTree = "<group>"; };
+		F80B57B12B0A69D900848826 /* TruckData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TruckData.swift; sourceTree = "<group>"; };
 		F81C48C82B093F51007423A7 /* 123Loadboard App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "123Loadboard App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F81C48CB2B093F51007423A7 /* _23Loadboard_AppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _23Loadboard_AppApp.swift; sourceTree = "<group>"; };
 		F81C48CF2B093F52007423A7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -164,6 +170,8 @@
 			children = (
 				F81C48FF2B095258007423A7 /* PreferenceKeys.swift */,
 				F8721DD42B09A8F50029CC70 /* Load.swift */,
+				F80B57AF2B0A69BE00848826 /* NotificationData.swift */,
+				F80B57B12B0A69D900848826 /* TruckData.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -176,6 +184,7 @@
 				F81C49432B09912A007423A7 /* TruckModel.swift */,
 				F81C49452B099141007423A7 /* LoadModel.swift */,
 				F8721DD62B09E9560029CC70 /* WebSocketModel.swift */,
+				F80B57AD2B0A693E00848826 /* NotificationModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -301,9 +310,12 @@
 				F81C48E12B094A56007423A7 /* LogoView.swift in Sources */,
 				F81C49442B09912A007423A7 /* TruckModel.swift in Sources */,
 				F8721DD52B09A8F50029CC70 /* Load.swift in Sources */,
+				F80B57B22B0A69D900848826 /* TruckData.swift in Sources */,
 				F81C48ED2B094D76007423A7 /* HapticFeedback.swift in Sources */,
+				F80B57AE2B0A693E00848826 /* NotificationModel.swift in Sources */,
 				F8721DD32B09A01C0029CC70 /* LoadView.swift in Sources */,
 				F81C48E32B094AA5007423A7 /* AuthAPIModel.swift in Sources */,
+				F80B57B02B0A69BE00848826 /* NotificationData.swift in Sources */,
 				F81C49002B095259007423A7 /* PreferenceKeys.swift in Sources */,
 				F81C48CC2B093F51007423A7 /* _23Loadboard_AppApp.swift in Sources */,
 				F81C48FC2B095094007423A7 /* DismissKeyboard.swift in Sources */,

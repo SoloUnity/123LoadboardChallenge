@@ -28,7 +28,7 @@ struct LoadListView: View {
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack {
-                ForEach(loadModel.loads) { load in
+                ForEach(loadModel.filteredLoads) { load in
                     LoadView(load: load, isLoading: $isLoading)
                         .onTapGesture {
                             self.isLoading = true  // Start loading

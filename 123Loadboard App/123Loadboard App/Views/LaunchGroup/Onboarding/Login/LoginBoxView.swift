@@ -14,7 +14,9 @@ struct LoginBoxView: View {
     }
     
     @EnvironmentObject private var authAPIModel : AuthAPIModel
-    
+    @EnvironmentObject private var truckModel : TruckModel
+    @EnvironmentObject private var loadModel : LoadModel
+
     var body: some View {
         
         VStack {
@@ -24,10 +26,13 @@ struct LoginBoxView: View {
                 HStack {
                     Image(systemName: "truck.box.fill")
                     
-                    TextField("Truck ID" , text: $authAPIModel.inputUsername)
+                    TextField("Truck ID" , text: $truckModel.inputUsername)
                         .keyboardType(.default)
                         .disableAutocorrection(true)
                         .submitLabel(.continue)
+                        .onChange(of: truckModel.inputUsername) {
+                            loadModel.inputUsername = truckModel.inputUsername
+                        }
 
 
                 }

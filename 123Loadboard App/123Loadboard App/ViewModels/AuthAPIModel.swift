@@ -11,7 +11,6 @@ import SwiftUI
 class AuthAPIModel: ObservableObject {
     
     @Published var isAuthenticated = false
-    @Published var inputUsername = ""
     @AppStorage("isAuthenticated") var isAuthenticatedStored = false
 
     func authenticate() {

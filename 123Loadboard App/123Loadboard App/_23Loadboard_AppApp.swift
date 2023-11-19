@@ -16,6 +16,7 @@ struct _23Loadboard_AppApp: App {
                 .environmentObject(LocationManager())
                 .environmentObject(TruckModel())
                 .environmentObject(LoadModel())
+                .environmentObject(Websocket())
         }
         
     }

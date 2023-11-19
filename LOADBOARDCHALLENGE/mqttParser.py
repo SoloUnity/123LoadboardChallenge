@@ -90,20 +90,26 @@ def mqttParser(kdTreeLong, kdTreeShort):
     loads = dict()
     waiting_queue = queue.Queue()
 
-    def check_waiting_queue():
+    def check_waiting_queue(message_queue):
         while True:
             if not waiting_queue.empty():
                 truck_id = waiting_queue.get()
                 result = trucker_find_loads(kdTreeLong, kdTreeShort, truck_id, trucks[truck_id])
                 
                 if result[2] != "negative profit":
+                    print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
                     print(f"Update: Driver {truck_id} found a new load: {result}")
+                    message_queue.put(json.dumps({
+                    "truck_id": truck_id,
+                    "load_id": result[0],
+                    'type' : "notification"
+                    }))
                 else:
                     waiting_queue.put(truck_id)
 
             time.sleep(10)  # Adjust the sleep interval as needed
 
-    check_queue_thread = threading.Thread(target=check_waiting_queue)
+    check_queue_thread = threading.Thread(target=check_waiting_queue, args=(message_queue))
     check_queue_thread.daemon = True  # The thread will exit when the main program exits
     check_queue_thread.start()
 
@@ -162,13 +168,18 @@ def mqttParser(kdTreeLong, kdTreeShort):
                 if start_event_received:
                     load_info = trucker_find_loads(kdTreeLong, kdTreeShort, truck_id, trucks[truck_id])
                     print(load_info)
+                    message_queue.put(json.dumps({
+                    "truck_id": truck_id,
+                    "load_id": load_info[0],
+                    'type' : "notification"
+                    }))
                     if load_info[2] == "negative profit":
+                        print("**********************************************************")
                         waiting_queue.put(truck_id)
 
 
             elif msg_type == "Load":
                 load_id = data.get("loadId")
-
                 load_type = data['equipmentType']
                 origin_latitude = data['originLatitude']
                 origin_longitude = data['originLongitude']
@@ -205,7 +216,13 @@ def mqttParser(kdTreeLong, kdTreeShort):
     client.connect(host, port, 60)
 
     # Start the network loop
-    client.loop_forever()
+    try:
+        while True:
+            client.loop(timeout=1)  # Process network events with a timeout
+            time.sleep(1)  # Adjust the sleep interval as needed
+    except KeyboardInterrupt:
+        print("Received KeyboardInterrupt. Stopping the program.")
+        client.disconnect()  # Disconnect from the MQTT broker
 
 def mqtt_main():
     global kdTree
