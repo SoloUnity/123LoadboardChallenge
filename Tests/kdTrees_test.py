@@ -1,47 +1,49 @@
-import sys
-import os
 import unittest
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from KDTree import KDTree  # Updated import to reflect the new class-based structure
-
-class TestKDTreeFunctionality(unittest.TestCase):
-
+from loader import KDTreeLoads
+class TestKDTree(unittest.TestCase):
     def setUp(self):
-        self.kd_tree = KDTree()  # Instantiate the KDTree object
-        self.sample_trucks = [
-            {"truck_id": 114, "point": (41.425058, -87.33366), "truck_type": "Van"},
-            {"truck_id": 346, "point": (39.195726, -84.665296), "truck_type": "Van"},
-            {"truck_id": 114, "point": (40.32124710083008, -86.74946594238281), "truck_type": "Van"}
-        ]
-        for truck in self.sample_trucks:
-            self.kd_tree.insert(truck["point"], truck["truck_id"], truck["truck_type"], )
+        self.kdTree = KDTreeLoads.KDTree()
 
-    def test_getTruckByID(self):
-        # Adjusted test to account for truck updates
-        for truck in reversed(self.sample_trucks):
-            truck_id = truck["truck_id"]
-            expected_location = truck["point"]
-            expected_type = truck["truck_type"]
-            retrieved_truck = self.kd_tree.getTruckByID(truck_id)
-            self.assertEqual(retrieved_truck.point, expected_location)
-            self.assertEqual(retrieved_truck.truck_type, expected_type)
-            break  # Break after the first check, as the last truck with the same ID overwrites the previous one
+    def test_insert_load_with_details(self):
+        # Test if load with additional details is inserted correctly
+        load_id = 1
+        origin_latitude = 40.0
+        origin_longitude = -75.0
+        load_type = "TypeA"
+        load_details = {
+            "time": "2023-11-17T11:31:35.0481646-05:00",
+            "mileage": 2166.0,
+            "price": 3150.0
+        }
 
-    def test_getTrucksByType(self):
-        van_trucks = self.kd_tree.getTrucksByType("Van")
-        for truck in van_trucks:
-            self.assertEqual(truck.truck_type, "Van")
+        self.kdTree.insert_load(origin_latitude, origin_longitude, load_id, load_type, load_details)
 
-    def test_findNearestNeighbor(self):
-        target_points = [
-            (39.531354, -87.440632),  # Close to load 101
-            (41.621465, -83.605482)   # Close to load 201
-        ]
-        expected_nearest_trucks = [114, 346]  # Expected nearest truck IDs
-        for target_point, expected_truck_id in zip(target_points, expected_nearest_trucks):
-            nearest_truck = self.kd_tree.findNearestNeighbor(target_point)
-            self.assertIsNotNone(nearest_truck, "No nearest truck found for the target point.")
-            self.assertEqual(nearest_truck.truck_id, expected_truck_id)
+        # Check if the load is present in the KDTree
+        load_node = self.kdTree.get_load_by_id(load_id)
+        self.assertIsNotNone(load_node)
+        self.assertEqual(load_node.load_id, load_id)
+        self.assertEqual(load_node.coords, (origin_latitude, origin_longitude))
+        self.assertEqual(load_node.load_type, load_type)
+        self.assertEqual(load_node.load_details, load_details)
+
+    def test_find_k_closest_loads(self):
+        # Test finding the closest loads
+        origin_coords = (0.0, 5.0)
+
+        # Insert some sample loads
+        self.kdTree.insert_load(1.0, 4.0, 2, "TypeB", {"time": "2023-11-17T12:00:00", "mileage": 2500.0, "price": 4000.0})
+        self.kdTree.insert_load(39.5, -76.0, 3, "TypeA", {"time": "2023-11-17T12:30:00", "mileage": 1800.0, "price": 3000.0})
+        self.kdTree.insert_load(40.2, -74.5, 4, "TypeC", {"time": "2023-11-17T13:00:00", "mileage": 3000.0, "price": 5000.0})
+        self.kdTree.insert_load(38.8, -75.5, 5, "TypeA", {"time": "2023-11-17T13:30:00", "mileage": 2200.0, "price": 3500.0})
+        self.kdTree.insert_load(20.9, 15.2, 6, "TypeB", {"time": "2023-11-17T14:00:00", "mileage": 2800.0, "price": 4500.0})
+
+        # Find the closest 3 loads
+        closest_loads = self.kdTree.find_k_closest_loads(origin_coords, k=2)
+        print(closest_loads)
+        # Validate the result
+        self.assertEqual(len(closest_loads), 2)
+        
+        # Add more specific assertions based on your expected results
 
 if __name__ == '__main__':
     unittest.main()

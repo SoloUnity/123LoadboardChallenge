@@ -1,7 +1,7 @@
 from gasModel import getProfitMinusGas
 import copy
 
-def trucker_find_loads(KDTree, truck):
+def trucker_find_loads(KDTree, truck_id, truck):
     working_KD_Tree = copy.deepcopy(KDTree)
     potential_loads = working_KD_Tree.find_k_closest_loads(truck["coords"])
     greatest_profit = 0
@@ -16,9 +16,9 @@ def trucker_find_loads(KDTree, truck):
         
     
     if not load_candidate == None:
-        return (load_candidate, greatest_profit)
+        return (load_candidate, truck_id, greatest_profit)
     else:
-        return(load_candidate, "no profit")
+        return(load_candidate, truck_id, "negative profit")
     
 
 def _classifier(distance):
