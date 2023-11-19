@@ -88,7 +88,7 @@ class KDTree:
     def _distance(self, x1, x2):
         def haversine_degrees(lat1, lon1, lat2, lon2):
             # Radius of the Earth in miles
-            R = 3959.0
+            R = 3958.8
             
             # Differences in coordinates in degrees
             delta_lat = lat2 - lat1
