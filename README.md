@@ -28,10 +28,8 @@ From the backend, we learned a lot about different data structures that can effi
 
 Perhaps in the future, we can implement a weigh based, machine learning model which adapts the notifications to the trucker's preferences over time. In this way, the algorithm will learn the loads that the trucker is most likely to accept over time and only ever push them their most relevant notifications.
 
-<div>
-  ![original](https://github.com/user-attachments/assets/6a6d8e87-3be2-45b3-b5a5-70e6487f3f8c)
-  ![gallery-2](https://github.com/user-attachments/assets/f6620f95-50c4-40af-ad13-f3c79f2b99aa)
-</div>
+![original](https://github.com/user-attachments/assets/6a6d8e87-3be2-45b3-b5a5-70e6487f3f8c)
+![gallery-2](https://github.com/user-attachments/assets/f6620f95-50c4-40af-ad13-f3c79f2b99aa)
 
 
 
