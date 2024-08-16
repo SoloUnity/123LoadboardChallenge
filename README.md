@@ -12,7 +12,8 @@ We built our project in parallel with a python based backend, a swift based exte
 
 ## Challenges we ran into
 
-Early on, we ran into challenges regarding the data structure we used. While our implementation of KD-Trees would typically be adequate for coordinates on a cartesian plane, we did not take into account that geospatial coordinates were on a globe. This meant that our euclidean distance based approach would not produce the best results. Even so, very late into the project, we resolved this issue with the implementation of the Haversine formula, a formula that enables the approximation of distances of two coordinates while taking into account of our Earth shaped as a globe.
+Early on, we ran into challenges regarding the data structure we used. While our implementation of KD-Trees would typically be adequate for coordinates on a cartesian plane, we did not take into account that geospatial coordinates were on a globe. This meant that our euclidean distance based approach would not produce the best results. Even so, very late into the project, we resolved this issue with the implementation of the Haversine formula, a formula that enables the approxi![original](https://github.com/user-attachments/assets/6a6d8e87-3be2-45b3-b5a5-70e6487f3f8c)
+mation of distances of two coordinates while taking into account of our Earth shaped as a globe.
 
 ## Accomplishments that we're proud of
 
@@ -22,6 +23,14 @@ We are proud of our output of not only the backend algorithm, but of our web soc
 
 From the backend, we learned a lot about different data structures that can efficiently handle geospatial coordinate sorted objects, web sockets for connectivity with clients and the MQTT protocol. In the frontend, this was the first time on both the web app and the mobile app that we ever used map based libraries and their apis.
 
+
+
 ## What's next for GoodLuckTruck
 
 Perhaps in the future, we can implement a weigh based, machine learning model which adapts the notifications to the trucker's preferences over time. In this way, the algorithm will learn the loads that the trucker is most likely to accept over time and only ever push them their most relevant notifications.
+
+
+![Uploading original.jpg…]()
+![gallery-2](https://github.com/user-attachments/assets/f6620f95-50c4-40af-ad13-f3c79f2b99aa)
+
+
